@@ -1,19 +1,54 @@
 import React, { Component }  from 'react';
 import {connect} from "react-redux";
-import { Glyphicon, Panel, ListGroup, ListGroupItem } from 'react-bootstrap'
+import { Glyphicon, Panel, ListGroup, ListGroupItem, Form, FormGroup, FormControl, Col, ControlLabel, Button } from 'react-bootstrap'
 import { Image } from 'react-bootstrap'
 import { withRouter } from "react-router-dom";
 import {fetchMovie} from "../actions/movieActions";
+import {submitReview} from "../actions/reviewActions";
 
 //support routing by creating a new component
 
 class Movie extends Component {
+
+    // constructor for reviews
+    constructor(props) {
+        super(props);
+
+        this.updateDetails = this.updateDetails.bind(this);     // bind state to these functions
+        this.submitReview = this.submitReview.bind(this);       // called to make a new review
+
+        this.state = {
+            details: {
+                quote:'',
+                rating:''
+            }
+        };
+    }
 
     componentDidMount() {
         const {dispatch} = this.props;
         if (this.props.selectedMovie == null) {
             dispatch(fetchMovie(this.props.movieId));
         }
+    }
+
+    updateDetails(event) {
+        let updateDetails = Object.assign({}, this.state.details);
+
+        updateDetails[event.target.id] = event.target.value;
+        this.setState( {
+            details: updateDetails
+        });
+    }
+
+    submitReview() {
+        const {dispatch} = this.props;
+        let review = {
+            movieId: this.props.movieId,
+            quote: this.state.details.quote,
+            rating: this.state.details.rating
+        }
+        dispatch(submitReview(review));
     }
 
     render() {
@@ -53,7 +88,29 @@ class Movie extends Component {
         }
 
         return (
-            <DetailInfo currentMovie={this.props.selectedMovie} />
+            <div>
+                <DetailInfo currentMovie={this.props.selectedMovie} />
+
+                <Form horizontal>
+                    <FormGroup controlId="quote">
+                        <Col componentClass={ControlLabel} sm={4}> Write a Review: </Col>
+                        <Col sm={8}>
+                            <FormControl componentClass="textarea" rows="3" onChange={this.updateDetails} value={this.state.details.quote} type="text" placeholder="Comment" />
+                        </Col>
+                    </FormGroup>
+
+                    <FormGroup controlId="rating">
+                        <Col componentClass={ControlLabel} sm={4}> Rating </Col>
+                        <Col sm={8}>
+                            <FormControl onChange={this.updateDetails} value={this.state.details.rating} type="number" min="1" max="5" placeholder="Rating" />
+                        </Col>
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Col smOffset={4} sm={8}> <Button onClick={this.submitReview}>Submit</Button></Col>
+                    </FormGroup>
+                </Form>
+            </div>
         )
     }
 }
