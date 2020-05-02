@@ -44,7 +44,7 @@ class Movie extends Component {
     submitReview() {
         const {dispatch} = this.props;
         let review = {
-            movieId: this.props.movieId,
+            title: this.props.title,
             quote: this.state.details.quote,
             rating: this.state.details.rating
         }
