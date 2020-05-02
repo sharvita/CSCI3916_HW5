@@ -1,7 +1,7 @@
 import runtimeEnv from "@mars/heroku-js-runtime-env";
 import {fetchMovie} from "./movieActions";
 
-export function submitReview(review) {
+export function submitReview(review, movieId) {
     const env = runtimeEnv();
     return dispatch => {
         return fetch(`${env.REACT_APP_API_URL}/reviews`, {
@@ -20,7 +20,7 @@ export function submitReview(review) {
                 return response.json();
             })
             .then( (res) => {
-                dispatch(fetchMovie(review.movieId));
+                dispatch(fetchMovie(movieId));
             })
             .catch( (e) => console.log(e) );
     }
